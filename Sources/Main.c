@@ -106,11 +106,18 @@ void initGUI ()
     gtk_widget_show_all (window);
 }
 
+/**
+ * Opens the user's default internet browser to my webpage.
+ */
 void loadAbout ()
 {
     system ("xdg-open 'https://aerodlyn.github.io/'");
 }
 
+/**
+ * Attempts to load the settings file for Orionis.
+ *      NOTE: If the file cannot be found or can't be opened then the program will attempt to create a new settings file.
+ */
 void loadSettings ()
 {
     FILE *file = fopen ("Settings.properties", "r");
@@ -138,6 +145,10 @@ void loadSettings ()
     }
 }
 
+/**
+ * Attempts to save the current selected settings to file.
+ *      NOTE: If the method cannot save to file, then it will notify the user and then exit.
+ */
 void saveSettings ()
 {
     FILE *file = fopen ("Settings.properties", "w");
@@ -157,6 +168,11 @@ void saveSettings ()
     }
 }
 
+/**
+ * Shows the given message to the user in the form of a message dialog.
+ *
+ * @param message The gchar (char) pointer (i.e. string) that represents the message to show to the user
+ */
 void showMessage (const gchar *message)
 {
     GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, message);
