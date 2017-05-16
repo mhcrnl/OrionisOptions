@@ -3,6 +3,8 @@
 static GtkWidget *aboutItem, *audioBox, *fileItem, *fileMenu, *graphicsBox, *menuBar, *menuBox, *optionsBox, *optionsNotebook, *quitItem, *saveButton, *window, *windowBox;
 static GtkWidget *musicRange, *sfxRange;
 static GtkWidget *musicFrame, *sfxFrame;
+static GtkWidget *resolutionChoices, *windowChoices;
+static GtkWidget *resolutionFrame, *windowFrame;
 
 void initGUI ();
 
