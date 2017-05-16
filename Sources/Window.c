@@ -92,6 +92,28 @@ void initGUI ()
     graphicsBox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
     gtk_notebook_append_page (GTK_NOTEBOOK (optionsNotebook), graphicsBox, gtk_label_new ("Graphics"));
 
+    /* Creates a frame with the title 'Resolution' to hold the screen resolution control. */
+    resolutionFrame = gtk_frame_new ("Resolution");
+    gtk_box_pack_start (GTK_BOX (graphicsBox), resolutionFrame, FALSE, TRUE, 5);
+
+    /* Creates a combo box widget that holds all of the screen resolution options, and adds it to 'resolutionFrame.' TODO: Store options in array. */
+    resolutionChoices = gtk_combo_box_text_new ();
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1366 x 768", "1366 x 768");
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1600 x 900", "1600 x 900");
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1920 x 1080", "1920 x 1080");
+    gtk_container_add (GTK_CONTAINER (resolutionFrame), resolutionChoices);
+
+    /* Creates a frame with the title 'Window Mode' to hold the window display mode control. */
+    windowFrame = gtk_frame_new ("Window Mode");
+    gtk_box_pack_start (GTK_BOX (graphicsBox), windowFrame, FALSE, TRUE, 5);
+
+    /* Creates a combo box widget that holds all of the window display mode options, and adds it to 'windowFrame.' */
+    windowChoices = gtk_combo_box_text_new ();
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Fullscreen");
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Borderless");
+    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Bordered");
+    gtk_container_add (GTK_CONTAINER (windowFrame), windowChoices);
+
     gtk_widget_show_all (window);
 }
 
@@ -122,6 +144,9 @@ void loadSettings ()
 
             if (strstr (line, "Music") != NULL)
                 gtk_range_set_value (GTK_RANGE (musicRange), atoi (line + 14));
+
+            if (strstr (line, "Resolution") != NULL)
+                gtk_combo_box_set_active (GTK_COMBO_BOX (resolutionChoices), 1/*line + 12*/);
         }
 
         fclose (file);
@@ -150,7 +175,10 @@ void saveSettings ()
 
     else
     {
-        fprintf (file, "[Settings]\nSFX Volume: %u\nMusic Volume: %u", (int) gtk_range_get_value (GTK_RANGE (sfxRange)), (int) gtk_range_get_value (GTK_RANGE (musicRange)));
+        int music   = (int) gtk_range_get_value (GTK_RANGE (musicRange));
+        int sfx     = (int) gtk_range_get_value (GTK_RANGE (sfxRange));
+   
+        fprintf (file, "[Settings]\nSFX Volume: %u\nMusic Volume: %u\nResolution: %u\nDisplay: %u", sfx, music, 1, 0/*resolution, display*/);
         fclose (file);
         
         showMessage ("Settings saved successfully.");
