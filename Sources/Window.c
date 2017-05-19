@@ -8,7 +8,7 @@ void initGUI ()
 {
     /* Creates the window. */
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title (GTK_WINDOW (window), "Orionis | Options");
+    gtk_window_set_title (GTK_WINDOW (window), name);
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
@@ -96,11 +96,12 @@ void initGUI ()
     resolutionFrame = gtk_frame_new ("Resolution");
     gtk_box_pack_start (GTK_BOX (graphicsBox), resolutionFrame, FALSE, TRUE, 5);
 
-    /* Creates a combo box widget that holds all of the screen resolution options, and adds it to 'resolutionFrame.' TODO: Store options in array. */
+    /* Creates a combo box widget that holds all of the screen resolution options, and adds it to 'resolutionFrame.'*/
     resolutionChoices = gtk_combo_box_text_new ();
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1366 x 768", "1366 x 768");
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1600 x 900", "1600 x 900");
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), "1920 x 1080", "1920 x 1080");
+
+    for (size_t i = 0; i < sizeof (resolutions) / sizeof (resolutions [0]); i++)
+        gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (resolutionChoices), NULL, resolutions [i]);
+
     gtk_container_add (GTK_CONTAINER (resolutionFrame), resolutionChoices);
 
     /* Creates a frame with the title 'Window Mode' to hold the window display mode control. */
@@ -109,9 +110,10 @@ void initGUI ()
 
     /* Creates a combo box widget that holds all of the window display mode options, and adds it to 'windowFrame.' */
     windowChoices = gtk_combo_box_text_new ();
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Fullscreen");
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Borderless");
-    gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, "Bordered");
+
+    for (size_t i = 0; i < sizeof (displays) / sizeof (displays [0]); i++)
+        gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (windowChoices), NULL, displays [i]);
+    
     gtk_container_add (GTK_CONTAINER (windowFrame), windowChoices);
 
     gtk_widget_show_all (window);
@@ -123,11 +125,10 @@ void initGUI ()
 void loadAbout ()
 {
     GtkWidget *dialog = gtk_about_dialog_new ();
-
-    const gchar *authors[] = {"Patrick Jahnig"};
-
-    gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "https://aerodlyn.github.io/");
-    gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (dialog), "Orionis Options is a simple external options application for Orionis, designed to help you change settings without having to open the game first or manually edit a file.");
+    
+    gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG (dialog), name);
+    gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), website);
+    gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (dialog), about);
     gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
 
     gtk_dialog_run (GTK_DIALOG (dialog));
@@ -155,12 +156,16 @@ void loadSettings ()
                 gtk_range_set_value (GTK_RANGE (musicRange), atoi (line + 14));
 
             if (strstr (line, "Resolution") != NULL)
-                gtk_combo_box_set_active (GTK_COMBO_BOX (resolutionChoices), 1/*line + 12*/);
+                gtk_combo_box_set_active (GTK_COMBO_BOX (resolutionChoices), atoi (line + 12));
+
+            if (strstr (line, "Display") != NULL)
+                gtk_combo_box_set_active (GTK_COMBO_BOX (windowChoices), atoi (line + 9));
         }
 
         fclose (file);
     }
-
+    
+    /* NOTE: fclose () is not needed (directly) below as it will be called in saveSettings () on the same file, or the program will exit (gracefully). */
     else
     {
         showMessage ("'Settings.properties' couldn't be found. A new file was created.");
@@ -184,10 +189,18 @@ void saveSettings ()
 
     else
     {
-        int music   = (int) gtk_range_get_value (GTK_RANGE (musicRange));
-        int sfx     = (int) gtk_range_get_value (GTK_RANGE (sfxRange));
-   
-        fprintf (file, "[Settings]\nSFX Volume: %u\nMusic Volume: %u\nResolution: %u\nDisplay: %u", sfx, music, 1, 0/*resolution, display*/);
+        int display     = (int) gtk_combo_box_get_active (GTK_COMBO_BOX (windowChoices));
+        int music       = (int) gtk_range_get_value (GTK_RANGE (musicRange));
+        int resolution  = (int) gtk_combo_box_get_active (GTK_COMBO_BOX (resolutionChoices));
+        int sfx         = (int) gtk_range_get_value (GTK_RANGE (sfxRange));
+
+        if (display < 0)
+            display = 0;
+
+        if (resolution < 0)
+            resolution = 0;
+
+        fprintf (file, settingsFormat, music, sfx, resolution, display);
         fclose (file);
         
         showMessage ("Settings saved successfully.");
