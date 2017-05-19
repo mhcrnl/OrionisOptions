@@ -1,1 +1,2 @@
-1)  GET TO WORK
+1)  Universal getline
+2)  Remember that to compile for Windows, PKG_CONFIG_PATH has to change to a Windows version of GTK.
