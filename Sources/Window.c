@@ -122,7 +122,16 @@ void initGUI ()
  */
 void loadAbout ()
 {
-    system ("xdg-open 'https://aerodlyn.github.io/'");
+    GtkWidget *dialog = gtk_about_dialog_new ();
+
+    const gchar *authors[] = {"Patrick Jahnig"};
+
+    gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "https://aerodlyn.github.io/");
+    gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (dialog), "Orionis Options is a simple external options application for Orionis, designed to help you change settings without having to open the game first or manually edit a file.");
+    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
+
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
 }
 
 /**
