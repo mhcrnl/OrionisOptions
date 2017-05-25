@@ -2,25 +2,20 @@
 
 static const char   *about          = "Orionis Options is a simple external options application for Orionis, designed to help you change settings without having to open the game first or manually edit a file.";
 static const char   *name           = "Orionis | Options";
-static const char   *settingsFormat = "[Settings]\nMusic Volume: %u\nSFX Volume: %u\nResolution: %u\nDisplay: %u";
+static const char   *settingsFormat = "[Settings]\nMusic Volume: %u\nSFX Volume: %u\nResolution: %u\nDisplay: %u\nVSync: %u";
 static const char   *website        = "https://aerodlyn.github.io/";
 
 static const char   *authors []     = { "Patrick Jahnig" };
 static const char   *displays []    = { "Fullscreen", "Borderless", "Bordered" };
 static const char   *resolutions [] = { "1366 x 768", "1600 x 900", "1920 x 1080" };
 
-static GtkWidget    *aboutItem, *audioBox, *fileItem, *fileMenu, *graphicsBox, *menuBar, *menuBox, *optionsBox, *optionsNotebook, *quitItem, *saveButton, *window, *windowBox;
+static GtkWidget    *aboutButton, *audioBox, *graphicsBox, *optionsBox, *optionsNotebook, *saveButton, *window, *windowBox;
 static GtkWidget    *musicRange, *sfxRange;
 static GtkWidget    *musicFrame, *sfxFrame;
-static GtkWidget    *resolutionChoices, *windowChoices;
-static GtkWidget    *resolutionFrame, *windowFrame;
+static GtkWidget    *resolutionChoices, *vsyncChoice, *windowChoices;
+static GtkWidget    *resolutionFrame, *vsyncFrame, *windowFrame;
 
 void initGUI ();
-
-/**
- * Opens the user's default internet browser to my webpage.
- */
-void loadAbout ();
 
 /**
  * Attempts to load the settings file for Orionis.
@@ -33,6 +28,11 @@ void loadSettings ();
  *      NOTE: If the method cannot save to file, then it will notify the user and then exit.
  */
 void saveSettings ();
+
+/**
+ * Shows a dialog with some information about the program.
+ */
+void showAbout ();
 
 /**
  * Shows the given message to the user in the form of a message dialog.

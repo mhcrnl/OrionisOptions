@@ -10,55 +10,31 @@ void initGUI ()
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), name);
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
     /* Connects the quit method to the window being destroyed. */
     g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-    /* Creates a window-wide vertical container to contain each control indirectly. TODO: Rename */
-    menuBox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add (GTK_CONTAINER (window), menuBox);
-    
-    /* Creates a menu bar and adds it as the first child of the window-wide (TODO: reference by name) container. */
-    menuBar = gtk_menu_bar_new ();
-    gtk_box_pack_start (GTK_BOX (menuBox), menuBar, FALSE, TRUE, 0);
-
-    /* Creates a file menu to hold menu controls pertaining to the file. */
-    fileMenu = gtk_menu_new ();
-
-    /* Creates all of the file menu controls. */
-    fileItem = gtk_menu_item_new_with_label ("File");
-    aboutItem = gtk_menu_item_new_with_label ("About");
-    quitItem = gtk_menu_item_new_with_label ("Quit");
-
-    /* Connects the necessary methods to the respective file menu controls. */
-    g_signal_connect (G_OBJECT (aboutItem), "activate", G_CALLBACK (loadAbout), NULL);
-    g_signal_connect (G_OBJECT (quitItem), "activate", G_CALLBACK (gtk_main_quit), NULL);
-
-    /* Sets the file menu to open via click, and appends it to the menu bar. */
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM (fileItem), fileMenu);
-    gtk_menu_shell_append (GTK_MENU_SHELL (menuBar), fileItem);
-    
-    /* Appends the file menu controls to the file menu. */
-    gtk_menu_shell_append (GTK_MENU_SHELL (fileMenu), aboutItem);
-    gtk_menu_shell_append (GTK_MENU_SHELL (fileMenu), quitItem);
-
-    /* Creates a horizontal container to contain the rest of the controls. TODO: Rename */
+    /* Creates a window-wide horizontal container to contain each control indirectly. TODO: Rename */
     windowBox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start (GTK_BOX (menuBox), windowBox, TRUE, TRUE, 0);
+    gtk_container_add (GTK_CONTAINER (window), windowBox);
 
     /* Creates a vertical container to contain the 'save settings' button. */
     optionsBox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start (GTK_BOX (windowBox), optionsBox, FALSE, FALSE, 1);
 
-    /* Creates the 'save settings' button add connects the appropriate method to it. */
+    /* Creates the 'save settings' button and connects the appropriate method to it. */
     saveButton = gtk_button_new_with_label ("Save Settings");
     g_signal_connect (G_OBJECT (saveButton), "clicked", G_CALLBACK (saveSettings), NULL);
-    
-    /* Create an "unused" vertical container that expands downward so that the 'save settings' button will be at the bottom of the application. A bit hacky. */
+   
+    /* Creates the 'about' button and connects the appropriate method to it. */
+    aboutButton = gtk_button_new_with_label ("About");
+    g_signal_connect (G_OBJECT (aboutButton), "clicked", G_CALLBACK (showAbout), NULL);
+
+    /* Create an "unused" vertical container that expands downward so that the 'about' and 'save settings' buttons will be at the bottom of the application. A bit hacky. */
     gtk_box_pack_start (GTK_BOX (optionsBox), gtk_box_new (GTK_ORIENTATION_VERTICAL, 0), TRUE, TRUE, 1);
     
-    /* Adds the 'save settings' button to the left side of the window (i.e. the 'optionsBox' container) TODO: Change once renamed */
+    /* Adds the 'about' and 'save settings' buttons to the left side of the window (i.e. the 'optionsBox' container) TODO: Change once renamed */
+    gtk_box_pack_start (GTK_BOX (optionsBox), aboutButton, FALSE, TRUE, 1);
     gtk_box_pack_start (GTK_BOX (optionsBox), saveButton, FALSE, TRUE, 1);
 
     /* Adds a vertical line between the 'optionsBox' and 'optionsNotebook' widgets. TODO: Change once renamed. */
@@ -74,7 +50,8 @@ void initGUI ()
 
     /* Creates a frame with the title 'Music Volume' to hold the music volume control. */
     musicFrame = gtk_frame_new ("Music Volume");
-    gtk_box_pack_start (GTK_BOX (audioBox), musicFrame, FALSE, TRUE, 5);
+    gtk_container_set_border_width (GTK_CONTAINER (musicFrame), 5);
+    gtk_box_pack_start (GTK_BOX (audioBox), musicFrame, FALSE, TRUE, 0);
     
     /* Creates the range control for music volume and adds it to 'musicFrame.' */
     musicRange = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 100, 5);
@@ -82,7 +59,8 @@ void initGUI ()
 
     /* Creates a frame with the title 'SFX Volume' to hold the sound effects volume control. */
     sfxFrame = gtk_frame_new ("SFX Volume");
-    gtk_box_pack_start (GTK_BOX (audioBox), sfxFrame, FALSE, TRUE, 5);
+    gtk_container_set_border_width (GTK_CONTAINER (sfxFrame), 5);
+    gtk_box_pack_start (GTK_BOX (audioBox), sfxFrame, FALSE, TRUE, 0);
 
     /* Creates the range control for sound effects volume and adds it to 'sfxFrame.' */
     sfxRange = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 100, 5);
@@ -94,7 +72,8 @@ void initGUI ()
 
     /* Creates a frame with the title 'Resolution' to hold the screen resolution control. */
     resolutionFrame = gtk_frame_new ("Resolution");
-    gtk_box_pack_start (GTK_BOX (graphicsBox), resolutionFrame, FALSE, TRUE, 5);
+    gtk_container_set_border_width (GTK_CONTAINER (resolutionFrame), 5);
+    gtk_box_pack_start (GTK_BOX (graphicsBox), resolutionFrame, FALSE, TRUE, 0);
 
     /* Creates a combo box widget that holds all of the screen resolution options, and adds it to 'resolutionFrame.'*/
     resolutionChoices = gtk_combo_box_text_new ();
@@ -106,7 +85,8 @@ void initGUI ()
 
     /* Creates a frame with the title 'Window Mode' to hold the window display mode control. */
     windowFrame = gtk_frame_new ("Window Mode");
-    gtk_box_pack_start (GTK_BOX (graphicsBox), windowFrame, FALSE, TRUE, 5);
+    gtk_container_set_border_width (GTK_CONTAINER (windowFrame), 5);
+    gtk_box_pack_start (GTK_BOX (graphicsBox), windowFrame, FALSE, TRUE, 0);
 
     /* Creates a combo box widget that holds all of the window display mode options, and adds it to 'windowFrame.' */
     windowChoices = gtk_combo_box_text_new ();
@@ -116,23 +96,14 @@ void initGUI ()
     
     gtk_container_add (GTK_CONTAINER (windowFrame), windowChoices);
 
+    vsyncFrame = gtk_frame_new ("VSync");
+    gtk_container_set_border_width (GTK_CONTAINER (vsyncFrame), 5);
+    gtk_box_pack_start (GTK_BOX (graphicsBox), vsyncFrame, FALSE, TRUE, 0);
+
+    vsyncChoice = gtk_check_button_new_with_label ("On/Off");
+    gtk_container_add (GTK_CONTAINER (vsyncFrame), vsyncChoice);
+     
     gtk_widget_show_all (window);
-}
-
-/**
- * Opens the user's default internet browser to my webpage.
- */
-void loadAbout ()
-{
-    GtkWidget *dialog = gtk_about_dialog_new ();
-    
-    gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG (dialog), name);
-    gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), website);
-    gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (dialog), about);
-    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
-
-    gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_destroy (dialog);
 }
 
 /**
@@ -160,6 +131,9 @@ void loadSettings ()
 
             if (strstr (line, "Display") != NULL)
                 gtk_combo_box_set_active (GTK_COMBO_BOX (windowChoices), atoi (line + 9));
+
+            if (strstr (line, "VSync") != NULL)
+                gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (vsyncChoice), atoi (line + 7));
         }
 
         fclose (file);
@@ -171,6 +145,22 @@ void loadSettings ()
         showMessage ("'Settings.properties' couldn't be found. A new file was created.");
         saveSettings ();
     }
+}
+
+/**
+ * Shows a dialog with some information about the program.
+ */
+void showAbout ()
+{
+    GtkWidget *dialog = gtk_about_dialog_new ();
+    
+    gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG (dialog), name);
+    gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), website);
+    gtk_about_dialog_set_comments (GTK_ABOUT_DIALOG (dialog), about);
+    gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
+
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
 }
 
 /**
@@ -193,6 +183,7 @@ void saveSettings ()
         int music       = (int) gtk_range_get_value (GTK_RANGE (musicRange));
         int resolution  = (int) gtk_combo_box_get_active (GTK_COMBO_BOX (resolutionChoices));
         int sfx         = (int) gtk_range_get_value (GTK_RANGE (sfxRange));
+        int vsync       = (int) gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (vsyncChoice));
 
         if (display < 0)
             display = 0;
@@ -200,7 +191,7 @@ void saveSettings ()
         if (resolution < 0)
             resolution = 0;
 
-        fprintf (file, settingsFormat, music, sfx, resolution, display);
+        fprintf (file, settingsFormat, music, sfx, resolution, display, vsync);
         fclose (file);
         
         showMessage ("Settings saved successfully.");
