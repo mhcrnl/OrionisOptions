@@ -1,2 +1,5 @@
 1)  Universal getline
 2)  Remember that to compile for Windows, PKG_CONFIG_PATH has to change to a Windows version of GTK.
+3)  Move hard-coded strings to appropriate header file.
+4)  Comment!
+
