@@ -3,7 +3,7 @@ OBJECTS = $(SOURCES:.c=.o)
 
 EXEC = ../OrionisOptions
 
-CC			= gcc
+CC		= gcc
 CFLAGS 		= -Wall
 GTKFLAGS	= `pkg-config --libs --cflags gtk+-3.0`
 
