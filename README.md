@@ -1,5 +1,3 @@
-[![Coverage Status](https://coveralls.io/repos/github/Aerodlyn/OrionisOptions/badge.svg?branch=master)](https://coveralls.io/github/Aerodlyn/OrionisOptions?branch=master)
-
 # Orionis | Options
 
 A simple external settings application for [Orionis](https://www.github.com/Aerodlyn/Orionis/) coded in C using [GTK](https://www.gtk.org/).
